@@ -55,10 +55,9 @@ export function buildError(err: ResponseError) {
   const outError = err.detail || err.message;
   const alreadyExistError = outError.match(/(already exists)/gi);
 
-  // Return INTERNAL_SERVER_ERROR for all other cases
+  logger.error(`500 error due to: ${err}`);
 
-  // console.log(err);
-  logger.info(`500 error due to: ${err}`);
+  // Return INTERNAL_SERVER_ERROR for all other cases
 
   return {
     code: HttpStatus.INTERNAL_SERVER_ERROR,

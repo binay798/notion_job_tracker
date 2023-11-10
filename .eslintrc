@@ -20,6 +20,7 @@
     "semi": 2,
     "curly": 2,
     "no-var": 2,
+    "no-unused-vars": "off",
     "eqeqeq": 2,
     "eol-last": ["error", "always"],
     "key-spacing": 2,
@@ -34,14 +35,7 @@
     "object-curly-spacing": [2, "always"],
     "camelcase": [2, { "properties": "never" }],
     "quotes": [2, "single", { "allowTemplateLiterals": true }],
-    "prettier/prettier": [
-      "error",
-      {
-        "singleQuote": true,
-        "bracketSpacing": true,
-        "printWidth": 120
-      }
-    ],
-    "@typescript-eslint/ban-ts-comment": "off"
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/no-unused-vars": "error"
   }
 }
