@@ -1,0 +1,27 @@
+import  Knex  from 'knex';
+
+/**
+ * Create table `table_name`.
+ *
+ * @param   {object} knex
+ * @returns {Promise}
+ */
+
+const TABLE_NAME='name';
+export function up(knex: Knex): Promise<void> {
+  return knex.schema.createTable(TABLE_NAME, table => {
+    table.increments();
+    table.timestamp('created_at').notNullable().defaultTo(knex.raw('now()'));
+    table.timestamp('updated_at').notNullable().defaultTo(knex.raw('now()'));
+  });
+}
+
+/**
+ * Drop `table_name`.
+ *
+ * @param   {object} knex
+ * @returns {Promise}
+ */
+export function down(knex: Knex): Promise<void> {
+  return knex.schema.dropTable(TABLE_NAME);
+}
