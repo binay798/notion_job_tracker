@@ -1,5 +1,7 @@
 import HttpStatus from 'http-status-codes';
 import { isEmpty } from 'lodash';
+import { ResponseError } from '../types/error.types';
+import logger from './logger';
 
 /**
  * Build error response for validation errors.
@@ -8,16 +10,24 @@ import { isEmpty } from 'lodash';
  * @returns {Object}
  */
 
-export interface Error {
-  isJoi: boolean;
-  isBoom: boolean;
-  output: { statusCode: number; payload: { message: string; error: string } };
-  detail: string;
-  message: string;
-  details: { message: string; path: string[] }[];
-}
+export function buildError(err: ResponseError) {
+  // JWT ERRORS
+  // eslint-disable-next-line no-constant-condition
+  if (err.name === 'TokenExpiredError' || err.name === 'JsonWebTokenError') {
+    return {
+      code: HttpStatus.UNAUTHORIZED,
+      message: HttpStatus.getStatusText(HttpStatus.UNAUTHORIZED),
+    };
+  }
 
-export function buildError(err: Error) {
+  // DB ERRORS
+  if (err.code) {
+    const code = typeof err.code === 'string' ? err.code : err.code.toString();
+    if (code.startsWith('235')) {
+      return handleDbError(code, err);
+    }
+  }
+
   // Validation errors
   if (err.isJoi) {
     return {
@@ -46,8 +56,46 @@ export function buildError(err: Error) {
   const alreadyExistError = outError.match(/(already exists)/gi);
 
   // Return INTERNAL_SERVER_ERROR for all other cases
+
+  // console.log(err);
+  logger.info(`500 error due to: ${err}`);
+
   return {
     code: HttpStatus.INTERNAL_SERVER_ERROR,
     message: isEmpty(alreadyExistError) ? 'Invalid request. Please refresh the page and try again.' : outError,
   };
+}
+
+function handleDbError(code: string, err: ResponseError) {
+  let message = '';
+  if (code === '23502') {
+    message = `'${err.column}' should not be null`;
+
+    return {
+      code: HttpStatus.INTERNAL_SERVER_ERROR,
+      message,
+      // details: [],
+    };
+  } else if (code === '23505') {
+    const regExp = /\(([^)]+)\)/g;
+    const matches = err.detail.match(regExp);
+    message = `${matches && matches[0]} with value ${matches && matches[1]} already exist`.replace(/["'()]/g, `'`);
+
+    return {
+      code: HttpStatus.INTERNAL_SERVER_ERROR,
+      message,
+    };
+  } else if (code === '23503') {
+    const matches = err.detail.match(/"(.*?)"/g);
+
+    return {
+      code: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: `${matches && matches[0]} doesnot exist`,
+    };
+  } else {
+    return {
+      code: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR),
+    };
+  }
 }

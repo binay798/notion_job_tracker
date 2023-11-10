@@ -33,7 +33,7 @@ export const catchAsyncFile = (fn: any) => {
       return next(err);
     } finally {
       if (req.uploadDir) {
-        await deleteFolder(req.uploadDir || '', false);
+        await deleteFolder(req.uploadDir || '');
       }
     }
   };

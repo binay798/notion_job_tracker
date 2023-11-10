@@ -7,7 +7,7 @@ export const generateToken = (res: Response, data: {}) => {
     expiresIn: process.env.TOKEN_EXPIRES,
   });
   res.cookie('token', token, {
-    maxAge: 86400000, // 24 hrs
+    maxAge: Number(process.env.TOKEN_EXPIRES),
     secure: false, // if SSL is implemented than true
     httpOnly: true,
   });

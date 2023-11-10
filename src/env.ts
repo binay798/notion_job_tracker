@@ -4,7 +4,7 @@ import Joi from 'joi';
 dotenv.config();
 
 // ENVIRONMENT VARIABLE VALIDATION
-const envVarsSchema = Joi.object()
+const envVarsSchema = Joi.object<NodeJS.ProcessEnv>()
   .keys({
     NODE_ENV: Joi.string().valid('production', 'development', 'test').required(),
     APP_NAME: Joi.string().required(),

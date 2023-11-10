@@ -2,6 +2,7 @@ import fs from 'fs';
 import winston, { format } from 'winston';
 
 import 'winston-daily-rotate-file';
+import util from 'util';
 
 // Use LOG_DIR from env
 const LOG_DIR = process.env.LOG_DIR || 'logs';
@@ -42,5 +43,8 @@ export const logStream = {
     logger.info(message.toString());
   },
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, no-console
+export const deepConsole = (data: any) => console.log(util.inspect(data, true, 10, true));
 
 export default logger;

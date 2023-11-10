@@ -11,9 +11,9 @@ import compression from 'compression';
 import { router } from './root.routes';
 import { genericErrorHandler, methodNotAllowed } from './middlewares/errorHandler';
 import logger, { logStream } from './utils/logger';
-import { PUBLIC_PATH } from './utils/constants';
 
 import path from 'path';
+import { PUBLIC_PATH } from './config/global.constants';
 
 export const app: Application = express();
 // MIDDLEWARES
