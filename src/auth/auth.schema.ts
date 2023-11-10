@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { ROLE } from '../utils/constants';
+import { ROLE } from '../config/global.constants';
 
 export const SIGNUP_SCHEMA = Joi.object({
   firstname: Joi.string().required(),

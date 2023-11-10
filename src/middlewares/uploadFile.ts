@@ -2,7 +2,7 @@ import * as childProcess from 'child_process';
 import { Request, Response, NextFunction } from 'express';
 import formidable from 'formidable';
 import mkdirp from 'mkdirp';
-import { PUBLIC_PATH } from '../utils/constants';
+import { PUBLIC_PATH } from '../config/global.constants';
 
 export const uploadFile = (uploadType = 'image', multiples = true) => {
   return (req: Request, res: Response, next: NextFunction) => {

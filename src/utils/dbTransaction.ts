@@ -128,7 +128,7 @@ export const getDataOfTableByRowIds = <T>(
   const bindings: (number | string)[] = [...rowIds];
   let validationStr = '';
   if (!isEmpty(validate)) {
-    const data = Object.keys(validate)
+    const data = Object.keys(validate as object)
       // @ts-ignore
       .filter((el) => validate[el] !== null)
       .map((el) => `${el} = ?`)
@@ -143,7 +143,7 @@ export const getDataOfTableByRowIds = <T>(
   }
   // for null
   if (!isEmpty(validate)) {
-    const data = Object.keys(validate)
+    const data = Object.keys(validate as object)
       // @ts-ignore
       .filter((el) => validate[el] === null)
       .map((el) => `${el} IS NULL`)

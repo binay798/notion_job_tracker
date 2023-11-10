@@ -3,9 +3,9 @@ import HttpStatus from 'http-status-codes';
 import mkdirp from 'mkdirp';
 import { sendFailureRes, sendSuccessRes } from '../utils/formatResponse';
 import * as userServices from './user.services';
-import { PUBLIC_PATH } from '../utils/constants';
 import { moveUploadedFiles } from '../utils/moveFiles';
 import { catchAsync, catchAsyncFile } from '../utils/catchAsync';
+import { PUBLIC_PATH } from '../config/global.constants';
 
 export const userContGetAllUser = catchAsync((req: Request, res: Response) => {
   const { fields, page, limit } = req.query;

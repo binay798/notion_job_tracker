@@ -1,19 +1,12 @@
 import fs from 'fs';
 import Boom from '@hapi/boom';
 import * as childProcess from 'child_process';
-// import logger from './logger';
 import mime from 'mime-types';
 import path from 'path';
 import mkdirp from 'mkdirp';
 import PersistentFile from 'formidable/PersistentFile';
-import { IAssets } from '../types/assets.types';
-import * as assetServices from '../assets/assets.services';
-import { Transaction } from 'knex';
-import { FLOOR_PLAN, PUBLIC_PATH } from '../config/global.constants';
 import mv from 'mv';
-import { FileType } from './enums';
 import fsPromise from 'fs/promises';
-import { FormidableFile } from '../types/files.types';
 import logger from './logger';
 import { isEmpty } from 'lodash';
 
@@ -46,43 +39,6 @@ export const moveUploadedFiles = async (
     return Promise.resolve(dbImage);
   } catch (err) {
     throw Boom.badRequest('Images not moved');
-  }
-};
-
-export const moveAssets = async (
-  uploadedFiles: FormidableFile[] = [],
-  fileType: FileType,
-  fileSysDir: string,
-  userId: number,
-  transx?: Transaction
-) => {
-  try {
-    const assetIds = [];
-    const randomInt = getRandomInt(10000);
-    for await (const el of uploadedFiles) {
-      // @ts-ignore
-      const extension = mime.extension(el.mimetype);
-      if (extension) {
-        const fileName = `${Date.now() + randomInt}`;
-        const data: Omit<IAssets, 'id' | 'created_at' | 'updated_at'> = {
-          name: fileName,
-          file_type: fileType,
-          is_active: true,
-          label: el.originalname as string,
-        };
-        const asset = await assetServices.createAsset(data, userId, transx);
-
-        const assetFolder = path.join(PUBLIC_PATH, fileSysDir, `${asset.id}`);
-        await mkdirp(assetFolder);
-        // @ts-ignore
-        await moveFiles(el.filepath, path.join(assetFolder, `${fileName}.${extension}`));
-        assetIds.push(asset.id);
-      }
-    }
-
-    return assetIds;
-  } catch (err) {
-    throw Boom.badRequest('Something went wrong while uploading assets.');
   }
 };
 
@@ -135,80 +91,6 @@ export const convertBase64ToImage = (base64Str: string, pathToUpload: string) =>
 
   // Pipes an image with filename as the name.
   return fsPromise.writeFile(pathToUpload, buffer);
-};
-
-/**
- * Converts floorplan pdf to image. Returns db path of image if provided file is pdf
- * Otherwise return null.
- * sudo apt install poppler-utils
- *
- */
-export const pdfToImage = (pdfFile: FormidableFile, imgPath: string) => {
-  const extension = mime.extension(pdfFile.mimetype as string);
-
-  if (extension !== 'pdf') {
-    throw Boom.forbidden('Only pdf is supported for project plan.');
-  }
-
-  return new Promise((resolve, reject) => {
-    mkdirp.sync(imgPath);
-
-    const command = `pdftoppm -jpeg -r 300 -singlefile ${pdfFile.filepath} ${path.join(
-      imgPath,
-      FLOOR_PLAN.image.split('.')[0]
-    )}`;
-    const newProcess = childProcess.spawn(command, {
-      stdio: 'pipe',
-      shell: true,
-    });
-    let errData = '';
-    newProcess.stderr.on('data', (err) => {
-      errData = errData + err;
-    });
-
-    newProcess.on('close', () => {
-      if (errData) {
-        reject(Boom.internal(errData));
-      }
-
-      return resolve(path.join(imgPath, FLOOR_PLAN.image));
-    });
-  });
-};
-
-/**
- * Converts floor plan image to tiles
- * sudo apt install python-gdal OR sudo apt install python3-gdal
- *
- */
-export const imageToTiles = async (imagePath: string, parentPath: string, id: number) => {
-  const floorPlanFolder = path.join(parentPath, FLOOR_PLAN.tiles);
-  await deleteFolder(floorPlanFolder).catch(() => null);
-  mkdirp.sync(floorPlanFolder);
-
-  return new Promise((resolve, reject) => {
-    const command = `python3 gdal2tiles.py -l -p raster -w none ${imagePath} ${path.join(
-      parentPath,
-      FLOOR_PLAN.tiles
-    )}`;
-    const newProcess = childProcess.spawn(command, {
-      stdio: 'pipe',
-      shell: true,
-      cwd: `${process.env.PYTHONDIR}`,
-    });
-    let errData = '';
-    newProcess.stderr.on('data', (err) => {
-      errData = errData + err;
-    });
-
-    newProcess.on('close', () => {
-      if (errData) {
-        reject(Boom.internal(errData));
-      }
-
-      return resolve(`${id}/${FLOOR_PLAN.tiles}`);
-    });
-  });
 };
 
 export const deleteFile = async (filePath: string) => {

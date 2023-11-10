@@ -9,7 +9,7 @@ import { Transaction } from 'knex';
 export const createUser = (data: User, transx?: Transaction) => {
   const model = new UserModel(data);
 
-  return insertIntoDB(model, transx);
+  return insertIntoDB<User>(model, transx);
 };
 
 export const getUserByEmail = (email: string) => {

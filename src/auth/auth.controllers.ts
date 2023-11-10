@@ -3,7 +3,6 @@ import HttpStatus from 'http-status-codes';
 import { hashPassword, comparePassword } from '../utils/hashPassword';
 import * as userServices from '../users/user.services';
 import { sendFailureRes, sendSuccessRes } from '../utils/formatResponse';
-import * as tokenServices from '../tokens/token.services';
 import { mailTransporter } from '../utils/sendMail';
 import { generateToken } from '../utils/generateToken';
 import { bookshelf } from '../db';
@@ -30,9 +29,6 @@ export const authContSignup = catchAsync(async (req: Request, res: Response) => 
       },
       transx
     );
-    // CREATE TOKEN BASED ON USER ID
-    await tokenServices.createToken(user.id, transx);
-    // TODO: Send email
 
     return sendSuccessRes(HttpStatus.OK)(res, 'Account successfully created.')({ user });
   });
@@ -73,14 +69,12 @@ export const authContForgotPassword = catchAsync(async (req: Request, res: Respo
   if (!user) {
     return sendFailureRes(HttpStatus.NOT_FOUND)(res, 'User with this email not found.')({});
   }
-  // CREATE TOKEN BASED ON USER ID
-  const token = await tokenServices.createToken(user.id);
   // SEND PASSWORD RESET URL IN THROUGH EMAIL
   const emailConfig = {
     from: process.env.FROM_MAIL,
     to: user.email,
     subject: 'Reset your password',
-    html: `http://${process.env.APP_HOST}:${process.env.APP_PORT}/api/auth/reset-password?token=${token.value}`,
+    html: `http://${process.env.APP_HOST}:${process.env.APP_PORT}/api/auth/reset-password?token=fdlfd`,
   };
   await mailTransporter.sendMail(emailConfig);
 
@@ -105,11 +99,7 @@ export const authContResetPassword = catchAsync((req: Request, res: Response) =>
   }
 
   return bookshelf.transaction(async (transx: Transaction) => {
-    const myTokenRes = await tokenServices.findByToken(token as string);
-    const myToken = myTokenRes.toJSON();
-    await tokenServices.deleteTokenById(myToken.id, transx);
-
-    await userServices.changeUserPassword(myToken.user_id, password, transx);
+    await userServices.changeUserPassword(1, password, transx);
 
     return sendSuccessRes(HttpStatus.OK)(res, 'Password has been successfully changed.')({});
   });
@@ -129,11 +119,7 @@ export const authContVerifyUser = catchAsync((req: Request, res: Response) => {
   }
 
   return bookshelf.transaction(async (transx: Transaction) => {
-    const myTokenRes = await tokenServices.findByToken(token as string);
-    const myToken = myTokenRes.toJSON();
-    await tokenServices.deleteTokenById(myToken.id, transx);
-
-    await userServices.updateUser(myToken.user_id, { verified: true }, transx);
+    await userServices.updateUser(4, { verified: true }, transx);
 
     return sendSuccessRes(HttpStatus.OK)(res, 'Your account has been successfully verified.')({});
   });
