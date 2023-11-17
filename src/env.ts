@@ -22,6 +22,7 @@ const envVarsSchema = Joi.object<NodeJS.ProcessEnv>()
     JWT_SECRET: Joi.string().required().description('JWT secret key'),
     TOKEN_EXPIRES: Joi.string().required(),
     // DIRECTORIES
+    ROOT_PATH: Joi.string().required(),
     PUBLIC_PATH: Joi.string().required(),
     TEMP_DIR: Joi.string().required(),
   })
