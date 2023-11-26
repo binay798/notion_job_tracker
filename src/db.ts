@@ -1,7 +1,10 @@
 import knex from 'knex';
-import _bookshelf from 'bookshelf';
 import * as knexConfig from './knexfile';
 
 const _knex = knex(knexConfig);
-export const bookshelf = _bookshelf(_knex);
-export const Model = bookshelf.Model;
+
+const x = _knex.transaction();
+type UnwrapPromise<T> = T extends Promise<infer U> ? U : T;
+export type Transaction = UnwrapPromise<typeof x>;
+
+export const Knex = _knex;

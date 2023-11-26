@@ -6,3 +6,7 @@ export const ROLE = {
   admin: 'admin',
   all: ['user', 'admin'],
 };
+
+export const TABLE = {
+  users: 'users',
+};

@@ -1,5 +1,4 @@
 import Knex from 'knex';
-import { ROLE } from '../utils/constants';
 
 const TABLE_NAME = 'users';
 export function up(knex: Knex): Promise<void> {
@@ -11,7 +10,6 @@ export function up(knex: Knex): Promise<void> {
     table.string('lastname').notNullable();
     table.string('email').notNullable();
     table.string('password').notNullable();
-    table.enu('role', ROLE.all).notNullable();
     table.boolean('verified').notNullable().defaultTo(false);
     table.string('image');
   });
