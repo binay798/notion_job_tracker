@@ -9,7 +9,7 @@ services:
     deploy:
       replicas: 1
     volumes:
-      - backend_school_backend_node_modules:/app/node_modules
+      - backend_notion_job_tracker_node_modules:/app/node_modules
       - notion_job_tracker_assets:/app/public
     networks:
       - traefik-proxy

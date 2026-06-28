@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "create-env": "cross-env NODE_ENV=development && ts-node src/utils/getEnv.ts",
-    "start": "npm run build && cross-env NODE_ENV=production pm2 start dist/index.js --name smart-clerk-p2",
+    "start:prod": "npm run build && node dist/index.js",
     "start:test": "npm run build && cross-env NODE_ENV=production node dist/src/index.js",
     "build": "rimraf dist && tsc",
     "build:fast": "esbuild src/index.ts --bundle --minify --platform=node --packages=external --outfile=dist/index.js",
