@@ -37,7 +37,7 @@ import { getAllToBeProcessedJob } from './tracker/tracker.services';
 //     });
 //   }
 // })();
-cron.schedule('*/1 * * * *', () => {
+cron.schedule('0 * * * *', () => {
   // Call your function here
   getAllToBeProcessedJob();
 });
