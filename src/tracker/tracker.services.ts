@@ -1,48 +1,96 @@
 /* eslint-disable curly */
-import { ChatCompletionMessageParam, ChatCompletionTool } from 'openai/resources';
+import { ChatCompletionMessageParam } from 'openai/resources';
 import { openai } from '../config/deepseek.config';
 import { HEADINGS } from '../config/global.constants';
 import { notion } from '../config/notion.config';
 import { DEFAULT_RESUME } from '../utils/getDefaultResume';
 import { isEmpty } from 'lodash';
+import { chunkByCharactersSafe, tools } from './tracker.utils';
+import { JobApplicationProperties } from '../types/jobTracker.types';
 
-export const generateResumeService = async (dto: { pageId: string; updatedProperties: string[]; type: string }) => {
-  const pageId = dto.pageId;
-  if (dto.type === 'page.properties_updated') {
-    const data = await notion.pages.retrieve({ page_id: pageId });
-    // @ts-ignore
-    const applicationStatus = data.properties[HEADINGS.applicationStatus].status.name;
-    // @ts-ignore
-    const isProcessed = data.properties[HEADINGS.processed].checkbox;
-    if (isProcessed && applicationStatus === 'Applied') {
-      return;
-    }
-    // @ts-ignore
-    const jd = data.properties[HEADINGS.jobDescription].rich_text.map((el) => el.plain_text).join(' ');
+export const generateResumeService = async (dto: { page_id: string; properties: JobApplicationProperties }) => {
+  // const data = await notion.pages.retrieve({ page_id: pageId });
+  // // @ts-ignore
+  // // const applicationStatus = data.properties[HEADINGS.applicationStatus].status.name;
+  // // @ts-ignore
+  // const isProcessed = data.properties[HEADINGS.processed].checkbox;
+  // if (isProcessed) {
+  //   logger.info('Already Processed');
 
-    const { html, email, phone } = await generateResumeHtml(jd);
+  //   return;
+  // }
+  // // @ts-ignore
+  // const jd = data.properties[HEADINGS.jobDescription].rich_text.map((el) => el.plain_text).join(' ');
+  // // @ts-ignore
+  // const companyName = data.properties[HEADINGS.company].title.map((el) => el.text.content);
+  // // @ts-ignore
+  // const role = data.properties[HEADINGS.roleTitle].rich_text.map((el) => el.plain_text);
+  // logger.info('Processing');
+  const jd = dto.properties['Job Description'].rich_text?.map((el) => el.plain_text).join(' ');
+  const companyName = dto.properties.Company.title.map((el) => el.plain_text).join(' ');
+  const role = dto.properties['Role Title'].rich_text.map((el) => el.plain_text).join(' ');
+  const { html, email, phone } = await generateResumeHtml(jd);
+  if (isEmpty(html)) {
     // @ts-ignore
     await notion.pages.update({
-      page_id: pageId,
-      // properties: [{ [HEADINGS.resumeHtml]: { rich_text: [{ text: { content: html } }] } }],
+      page_id: dto.page_id,
+      // @ts-ignore
       properties: {
         // @ts-ignore
-        ...data.properties,
+        ...dto.properties,
+        [HEADINGS.jobDescription]: {
+          rich_text: chunkByCharactersSafe(jd, 1500).map((el) => ({ text: { content: el } })),
+        },
         [HEADINGS.resumeHtml]: {
-          rich_text: chunkByCharactersSafe(html, 1500).map((el) => ({ text: { content: el } })),
+          rich_text: [{ text: { content: 'Error generating html' } }],
         },
         [HEADINGS.processed]: {
-          checkbox: true,
-        },
-        [HEADINGS.inJobMailOrPhone]: {
-          rich_text: [{ text: { content: `${email ?? ''} ${phone ?? ''}` } }],
+          checkbox: false,
         },
         [HEADINGS.applicationStatus]: {
-          status: { name: 'Applied' },
+          status: { name: 'Applying' },
         },
       },
     });
+
+    return;
   }
+  const coverLetter = await generateCoverLetter(html, jd, companyName, role);
+  let contactInfo = '';
+  if (email) {
+    contactInfo = contactInfo + email;
+  }
+  if (phone) {
+    contactInfo = contactInfo + ' ' + phone;
+  }
+  // @ts-ignore
+  await notion.pages.update({
+    page_id: dto.page_id,
+    // properties: [{ [HEADINGS.resumeHtml]: { rich_text: [{ text: { content: html } }] } }],
+    // @ts-ignore
+    properties: {
+      // @ts-ignore
+      ...dto.properties,
+      [HEADINGS.jobDescription]: {
+        rich_text: chunkByCharactersSafe(jd, 1500).map((el) => ({ text: { content: el } })),
+      },
+      [HEADINGS.resumeHtml]: {
+        rich_text: chunkByCharactersSafe(html, 1500).map((el) => ({ text: { content: el } })),
+      },
+      [HEADINGS.processed]: {
+        checkbox: true,
+      },
+      [HEADINGS.inJobMailOrPhone]: {
+        rich_text: [{ text: { content: contactInfo } }],
+      },
+      [HEADINGS.applicationStatus]: {
+        status: { name: 'Generated' },
+      },
+      [HEADINGS.coverLetter]: {
+        rich_text: chunkByCharactersSafe(coverLetter, 1500).map((el) => ({ text: { content: el } })),
+      },
+    },
+  });
 };
 
 const generateResumeHtml = async (jobDescription: string) => {
@@ -57,12 +105,21 @@ const generateResumeHtml = async (jobDescription: string) => {
 
   Please adhere strictly to the following ATS guidelines and optimization strategies:
 
-  1. Keyword Alignment: Analyze the provided job description and naturally integrate the core technical and soft-skill keywords into the professional summary, skills section, and experience bullets.
+  1. Keyword Alignment: Analyze the provided job description and naturally integrate the core technical and soft-skill keywords into the  skills section, and experience bullets.
   2. Impact-Driven Bullets: Rewrite work experience using the "Action Verb + Task + Result/Metric" format. Specifically, highlight the candidate's 3+ years of experience in full-stack development, system architecture, and debugging critical issues.
   3. Technical Emphasis: Where applicable to the job description, emphasize established backend infrastructure expertise, including Go, Node.js, AWS, and high-performance databases (PostgreSQL, Redis, Cassandra).
   4. Education & Research: Ensure the Master of ICT (Research) from the Melbourne Institute of Technology, the capstone project on GitOps-based network automation, and the Bachelor's degree are formatted clearly and professionally.
-  5. ATS Strict Formatting: Provide the output in a clean, single-column HTML format. Use standard section headers (Professional Summary, Skills, Professional Experience, Education, Projects) and avoid all tables, columns, or complex graphical elements.
+  5. ATS Strict Formatting: Provide the output in a clean, single-column HTML format. Use standard section headers ( Skills, Professional Experience, Education, Projects) and avoid all tables, columns, or complex graphical elements.
   6. Font family must be "Times New Roman", Times, serif. My name and associated links should be text aligned centered. My name should be a little bigger.
+  7. My name in header should be 35px and uppercase and sub headings should be 18px. Body text should be 16px.
+  8. Output should be in html format.
+  9. Generate maximum of 3 distinct resume bullet points for Professional experience section using the Action + Context + Result (Metric) formula.
+        Strict Rules:
+          * Start every bullet with a strong past-tense action verb (e.g., Architected, Engineered, Optimized).
+          * Do NOT use passive filler phrases like "Responsible for," "Tasked with," or "Worked on."
+          * Naturally integrate the specific technologies used into the flow of the sentence.
+          * Keep each bullet to a single, concise sentence (maximum two lines).
+          * Make the points relevant to job description
   `;
   const userPrompt = `
   Here is my current resume and the target job description I am applying for. Please rewrite my resume based on your system instructions.
@@ -136,67 +193,77 @@ const generateResumeHtml = async (jobDescription: string) => {
   return { html: extractedHtml, ...contactInfo };
 };
 
-function chunkByCharactersSafe(text: string, maxChars = 100) {
-  if (!text || typeof text !== 'string') {
-    return [];
-  }
+const generateCoverLetter = async (resume: string, jobDescription: string, companyName: string, role: string) => {
+  const systemPrompt = `
 
-  const chunks = [];
-  let currentChunk = '';
-  const words = text.split(' ');
+  You are an expert technical career coach and a professional software engineer. Your task is to write highly tailored, compelling cover letters based on the user's provided details and target job description.
 
-  for (const word of words) {
-    // If a single word is somehow longer than the max limit, split the word itself
-    if (word.length > maxChars) {
-      if (currentChunk.trim()) chunks.push(currentChunk.trim());
+  You must strictly adhere to the following structural guidelines and best practices:
 
-      const giantWordChunks = word.match(new RegExp(`.{1,${maxChars}}`, 'g'));
-      if (giantWordChunks) {
-        chunks.push(...giantWordChunks.slice(0, -1));
-        currentChunk = giantWordChunks[giantWordChunks.length - 1] + ' ';
-        continue;
-      }
-    }
+  Structure & Tone:
 
-    // Check if adding the next word exceeds the character limit
-    if ((currentChunk + word).length > maxChars) {
-      chunks.push(currentChunk.trim()); // Save the current chunk
-      currentChunk = word + ' '; // Start a new chunk with the current word
-    } else {
-      currentChunk += word + ' '; // Keep adding to the current chunk
-    }
-  }
+  Keep it concise: Write exactly 4 short paragraphs. The total length must easily fit on one page.
 
-  // Push any remaining text in the final chunk
-  if (currentChunk.trim()) {
-    chunks.push(currentChunk.trim());
-  }
+  Tone: Professional, confident, and metric-driven. Do not make it read like a generic template. Avoid buzzword stuffing, but seamlessly mirror key terms from the job description.
 
-  return chunks;
-}
+  Content Requirements:
 
-const tools: ChatCompletionTool[] = [
-  {
-    type: 'function',
-    function: {
-      name: 'extract_contact_info',
-      description: 'Extracts the contact email and phone number from a job description.',
-      strict: true, // Enables DeepSeek's Strict Mode for exact schema matching
-      parameters: {
-        type: 'object',
-        properties: {
-          email: {
-            type: ['string', 'null'],
-            description: 'The contact email address found in the text. Return null if not found.',
-          },
-          phone: {
-            type: ['string', 'null'],
-            description: 'The contact phone number found in the text. Return null if not found.',
-          },
-        },
-        required: ['email', 'phone'],
-        additionalProperties: false, // Required when using strict: true
-      },
-    },
-  },
-];
+  Paragraph 1 (Hook and Role Fit): Draw the hiring manager in with a strong hook. State the exact position title, the company name, excitement for the role, and immediately mention a specific skill or recent experience that directly aligns with the core need in the job description.
+
+  Paragraph 2 (Skill Proof and Impact): Showcase 1 or 2 of the user's most relevant real-world projects or experiences. Focus heavily on quantifiable impact (e.g., percentages, user growth, systems efficiency) and show how their technical work tied directly to business or user value.
+
+  Paragraph 3 (Tools and Collaboration): Highlight the relevant technical stack (languages, frameworks, databases) that matches the job description. Also, highlight non-technical skills, specifically focusing on cross-functional teamwork, Agile collaboration, or leadership.
+
+  Paragraph 4 (Why this Company & Confident Close): Explain exactly why the user is applying to this specific company (referencing their mission, products, or industry). Conclude with a confident call to action, mentioning excitement for next steps, and include placeholders for phone number, email, and portfolio/GitHub links.
+  
+  `;
+  const userPrompt = `
+  Please generate my software engineering cover letter based on the details below.
+  My Details:
+  Binay Shrestha
+  458 Peats Ferry RD, Asquith 2077, Sydney, NSW
+  0466330266
+  
+  Target Role: ${role}
+  Key Projects & Measurable Impact: [Insert 1-2 projects, e.g., "Built a full-stack Node.js API that reduced data retrieval time by 40%"]
+  Target Company Details:
+  Company Name: ${companyName}
+  Job Description:
+  ${jobDescription}
+  My Resume:
+  ${resume}
+  `;
+  // @ts-ignore
+  const response = await openai.chat.completions.create({
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+    model: 'deepseek-v4-flash',
+    thinking: { type: 'enabled' },
+    reasoning_effort: 'high',
+    stream: false,
+  });
+  const text = response.choices[0].message.content ?? '';
+
+  return text;
+};
+
+export const getAllToBeProcessedJob = async () => {
+  // const databaseId = '3830d70e-79c6-807b-836e-dbd90102fa37';
+  const datasourceId = '3830d70e-79c6-809f-bbe3-000b38ac047d';
+  const response = await notion.dataSources.query({
+    data_source_id: datasourceId,
+    page_size: 50,
+    filter: { property: HEADINGS.processed, checkbox: { equals: false } },
+  });
+  // @ts-ignore
+  const results = response?.results?.map((el) => ({ page_id: el.id, properties: el.properties }));
+  if (isEmpty(results)) return;
+  const promises = results.map((el) => {
+    return generateResumeService(el);
+  });
+  await Promise.all(promises);
+};
+
+// getAllToBeProcessedJob();

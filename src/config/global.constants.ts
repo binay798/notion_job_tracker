@@ -32,6 +32,8 @@ export const HEADINGS = {
   jobDescription: 'Job Description',
   resumeHtml: 'Resume html',
   processed: 'Processed',
+  jobPoster: 'Job Poster',
+  messagedToJobPoster: 'Messaged To Job Poster',
 };
 
 export const HEADING_IDS = {

@@ -1,4 +1,4 @@
-import express, { Application, Request, Response } from 'express';
+import express, { Application } from 'express';
 // import './db';
 import './env';
 import './types/request.types';
@@ -14,11 +14,11 @@ import { router } from './root.routes';
 import { genericErrorHandler, methodNotAllowed } from './middlewares/errorHandler';
 import logger, { logStream } from './utils/logger';
 
+import cron from 'node-cron';
+
 import path from 'path';
 import { PUBLIC_PATH } from './config/global.constants';
-import { DBRowsProps } from './types/jobTracker.types';
-import { generateResumeService } from './tracker/tracker.services';
-import { catchAsync } from './utils/catchAsync';
+import { getAllToBeProcessedJob } from './tracker/tracker.services';
 
 // (async () => {
 //   const applicationsPageId = '3830d70e-79c6-80d1-a6ca-eeca50c148ee';
@@ -37,7 +37,10 @@ import { catchAsync } from './utils/catchAsync';
 //     });
 //   }
 // })();
-
+cron.schedule('*/1 * * * *', () => {
+  // Call your function here
+  getAllToBeProcessedJob();
+});
 export const app: Application = express();
 // MIDDLEWARES
 app.use(cors({ origin: '*', credentials: true }));
@@ -51,30 +54,6 @@ app.use('/static', express.static(PUBLIC_PATH));
 
 app.use(morgan('dev', { stream: logStream }));
 app.use('/api', router);
-
-app.post(
-  '/verify',
-  catchAsync(async (req: Request, res: Response) => {
-    const { data, type, entity } = req.body as DBRowsProps;
-    await generateResumeService({
-      pageId: entity.id,
-      updatedProperties: data.updated_properties,
-      type,
-    });
-
-    return res.json({ status: 'success' });
-  })
-);
-
-app.get('/data-source', async (req: Request, res: Response) => {
-  await generateResumeService({
-    pageId: '3830d70e-79c6-809f-bbe3-000b38ac047d',
-    updatedProperties: ['I%3Cd%5C', 'WoSr', '%5CYP~'],
-    type: 'page.properties_updated',
-  });
-
-  return res.json({ status: 'success' });
-});
 
 // PAGE ID = 3830d70e-79c6-807b-836e-dbd90102fa37
 // type = page.properties_updated

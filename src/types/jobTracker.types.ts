@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface DBRowsProps {
+  authors: { id: string; type: 'bot' | 'person' }[];
   entity: { id: string; type: string };
   type: string;
   data: {
