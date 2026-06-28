@@ -10,6 +10,4 @@ export type TPdfFirstPage = {
   width: number;
   height: number;
   rotation: number;
-  pdfDocument: PDFDocument;
-  pageObject: PDFPage;
 };
