@@ -7,10 +7,11 @@ EXPOSE 8000
 # Copy app and install packages
 WORKDIR /app
 COPY . /app/
-COPY ./public/defaultResume.txt /app/public/
 
 RUN mkdir public
 RUN touch public/favicon.ico
+RUN touch public/defaultResume.txt
+COPY ./public/defaultResume.txt /app/public/
 ENV ROOT_PATH=/app
 
 RUN npm install
