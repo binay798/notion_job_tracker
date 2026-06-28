@@ -1,0 +1,31 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: SSH and Deploy
+        env:
+          ENV_VAR: ${{ vars.ENV_VARIABLES }}
+        run: |
+          ssh -o StrictHostKeyChecking=no root@46.250.245.79 << 'EOF'
+            cd /root/apps/notion_job_tracker
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
+            echo "${{env.ENV_VAR}}" > .env
+            GIT_SSH_COMMAND="ssh -i ~/.ssh/contabo" git pull origin main
+            npm install 
+            docker compose up --build -d
+          EOF
