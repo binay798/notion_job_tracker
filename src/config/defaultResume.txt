@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Software Engineer Resume</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .links > a {
+        font-size: 14px;
+        color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1 class="name">Binay Shrestha</h1>
+      <div class="links">
+        <a href="https://binay.dev/" target="_blank">https://binay.dev</a>
+        <a href="mailto:binayshrestha798@gmail.com"
+          >binayshrestha798@gmail.com</a
+        >
+        <a target="_blank" href="https://www.linkedin.com/in/binayshrestha1/"
+          >https://www.linkedin.com/in/binayshrestha1</a
+        >
+        <a
+          target="_blank"
+          href="https://github.com/binay798"
+          style="text-decoration: underline"
+          >https://github.com/binay798</a
+        >
+      </div>
+    </header>
+    
+    <section class="core_skills section">
+      <h3>CORE SKILLS</h3>
+      <ul>
+        <li class="text">
+          Python, Javascript ( React JS, Next JS, Redux, Express JS , Node JS ),
+          Git, SQL, C++, Typescript, SCSS, GraphQL
+        </li>
+        <li class="text">
+          Docker, AWS, Frontend, Backend, Agile, CI/CD, AI, LLM, Microservices,
+          Redis, NGINX, Websockets
+        </li>
+      </ul>
+    </section>
+    <section class="section">
+      <h3>PROFESSIONAL EXPERIENCE</h3>
+      <div class="experience">
+        <div class="header">
+          <h5>Codniv Innovations - Software Engineer</h5>
+          <h5>Mar 2022 - May 2026</h5>
+        </div>
+        <ul>
+          <li class="text">
+            Identified and resolved over <b>100 critical bugs</b> during the
+            database migration process, resulting in a <b>30% reduction</b> in
+            data-related error tickets post-launch.
+          </li>
+          <li class="text">
+            Overhauled the legacy database systems by migrating them to a more
+            scalable and reliable platform, ensuring 99.9% uptime and data
+            integrity.
+          </li>
+          <li class="text">
+            Provided technical guidance and mentorship to junior team members,
+            resulting in a <b>15% increase</b> in their code contribution and a
+            significant improvement in overall code quality.
+          </li>
+        </ul>
+      </div>
+      
+    </section>
+    <section class="section projects">
+      <h3>PROJECTS</h3>
+      <ul>
+        <li>
+          <strong>Devflow</strong> - It is a web-based IDE that lets developers
+          write, run, and preview code in the browser using WebContainer
+          technology. It enables zero-setup full-stack development, real-time
+          collaboration, and secure isolated environments.
+        </li>
+        <li>
+          <strong>Scalable Real‑Time Chat Platform</strong> – Engineered a
+          high-traffic, real-time chat platform on AWS EC2, utilizing Redis
+          Pub/Sub to horizontally scale WebSocket connections. This architecture
+          supports thousands of concurrent users while maintaining low latency
+          (<100ms) and ensuring high availability.
+        </li>
+      </ul>
+    </section>
+    <br />
+
+    <section class="section education">
+      <h3>EDUCATION</h3>
+      <ul>
+        <li>
+          <strong> Master of ICT (Research)</strong> - Melbourne Institute of
+          Technology, Sydney, Australia
+        </li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h3>Work Rights</h3>
+      <ul>
+        <li>Full Working Rights in Australia</li>
+      </ul>
+    </section>
+  </body>
+</html>

@@ -10,8 +10,6 @@ COPY . /app/
 
 RUN mkdir public
 RUN touch public/favicon.ico
-RUN touch public/defaultResume.txt
-COPY ./public/defaultResume.txt /app/public/
 ENV ROOT_PATH=/app
 
 RUN npm install
