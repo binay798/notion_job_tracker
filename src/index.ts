@@ -54,8 +54,8 @@ app.use('/static', express.static(PUBLIC_PATH));
 
 app.use(morgan('dev', { stream: logStream }));
 app.use('/api', router);
-app.get('/force-start', (req: Request, res: Response) => {
-  getAllToBeProcessedJob();
+app.get('/force-start', async (req: Request, res: Response) => {
+  await getAllToBeProcessedJob();
 
   return res.json({ status: 'success' });
 });
