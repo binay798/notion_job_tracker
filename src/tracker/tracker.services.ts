@@ -7,6 +7,7 @@ import { DEFAULT_RESUME } from '../utils/getDefaultResume';
 import { isEmpty } from 'lodash';
 import { chunkByCharactersSafe, tools } from './tracker.utils';
 import { JobApplicationProperties } from '../types/jobTracker.types';
+import logger from '../utils/logger';
 
 export const generateResumeService = async (dto: { page_id: string; properties: JobApplicationProperties }) => {
   // const data = await notion.pages.retrieve({ page_id: pageId });
@@ -250,17 +251,21 @@ const generateCoverLetter = async (resume: string, jobDescription: string, compa
 };
 
 export const getAllToBeProcessedJob = async () => {
+  logger.info('✅ INITIALIZATION');
   // const databaseId = '3830d70e-79c6-807b-836e-dbd90102fa37';
   const datasourceId = '3830d70e-79c6-809f-bbe3-000b38ac047d';
   const response = await notion.dataSources.query({
     data_source_id: datasourceId,
-    page_size: 50,
+    page_size: 3,
     filter: { property: HEADINGS.processed, checkbox: { equals: false } },
   });
+  logger.info('✅ GOT UNPROCESSED JOBS');
   // @ts-ignore
   const results = response?.results?.map((el) => ({ page_id: el.id, properties: el.properties }));
   if (isEmpty(results)) return;
-  const promises = results.map((el) => {
+  const promises = results.map((el, id) => {
+    logger.info('✅ STARTED PROCESSING ', id + 1, ' JOB');
+
     return generateResumeService(el);
   });
   await Promise.all(promises);

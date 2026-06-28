@@ -1,4 +1,4 @@
-import express, { Application } from 'express';
+import express, { Application, Request, Response } from 'express';
 // import './db';
 import './env';
 import './types/request.types';
@@ -54,6 +54,11 @@ app.use('/static', express.static(PUBLIC_PATH));
 
 app.use(morgan('dev', { stream: logStream }));
 app.use('/api', router);
+app.get('/force-start', (req: Request, res: Response) => {
+  getAllToBeProcessedJob();
+
+  return res.json({ status: 'success' });
+});
 
 // PAGE ID = 3830d70e-79c6-807b-836e-dbd90102fa37
 // type = page.properties_updated
