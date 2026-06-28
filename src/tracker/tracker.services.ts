@@ -266,7 +266,11 @@ export const getAllToBeProcessedJob = async () => {
   logger.info('✅ GOT UNPROCESSED JOBS');
   // @ts-ignore
   const results = response?.results?.map((el) => ({ page_id: el.id, properties: el.properties }));
-  if (isEmpty(results)) return;
+  if (isEmpty(results)) {
+    logger.info('✅ NO RESULTS');
+
+    return;
+  }
   const promises = results.map((el, id) => {
     logger.info('✅ STARTED PROCESSING ', id + 1, ' JOB');
 
