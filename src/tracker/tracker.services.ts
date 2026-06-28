@@ -30,6 +30,7 @@ export const generateResumeService = async (dto: { page_id: string; properties: 
   const jd = dto.properties['Job Description'].rich_text?.map((el) => el.plain_text).join(' ');
   const companyName = dto.properties.Company.title.map((el) => el.plain_text).join(' ');
   const role = dto.properties['Role Title'].rich_text.map((el) => el.plain_text).join(' ');
+  logger.info('🔥 START GENERATING HTML');
   const { html, email, phone } = await generateResumeHtml(jd);
   if (isEmpty(html)) {
     // @ts-ignore
@@ -56,6 +57,8 @@ export const generateResumeService = async (dto: { page_id: string; properties: 
 
     return;
   }
+  logger.info('🔥 GENERATED HTML');
+  logger.info('🔥 START GENERATING COVER LETTER');
   const coverLetter = await generateCoverLetter(html, jd, companyName, role);
   let contactInfo = '';
   if (email) {
@@ -64,6 +67,7 @@ export const generateResumeService = async (dto: { page_id: string; properties: 
   if (phone) {
     contactInfo = contactInfo + ' ' + phone;
   }
+  logger.info('🔥 GENERATED COVER LETTER');
   // @ts-ignore
   await notion.pages.update({
     page_id: dto.page_id,
@@ -266,7 +270,7 @@ export const getAllToBeProcessedJob = async () => {
   const promises = results.map((el, id) => {
     logger.info('✅ STARTED PROCESSING ', id + 1, ' JOB');
 
-    return generateResumeService(el);
+    return generateResumeService(el).catch((err) => logger.error(err));
   });
   await Promise.all(promises);
 };
