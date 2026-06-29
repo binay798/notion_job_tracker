@@ -117,6 +117,11 @@ const generateResumeHtml = async (jobDescription: string) => {
   5. ATS Strict Formatting: Provide the output in a clean, single-column HTML format. Use standard section headers ( Skills, Professional Experience, Education, Projects) and avoid all tables, columns, or complex graphical elements.
   6. Font family must be "Times New Roman", Times, serif. My name and associated links should be text aligned centered. My name should be a little bigger.
   7. My name in header should be 35px and uppercase and sub headings should be 18px. Body text should be 16px.
+    Element,Recommended Font Size,Notes
+    Name,18 – 24 pt,Make it prominent at the very top.
+    Section Headings,14 – 16 pt,Use bolding to make them stand out.
+    Main Body Content,11 – 12 pt,The bulk of your text (experience/projects).
+    Contact Info/Sub-headers,10 – 12 pt,Can be slightly smaller than body text if needed.
   8. Output should be in html format.
   9. Generate maximum of 3 distinct resume bullet points for Professional experience section using the Action + Context + Result (Metric) formula.
         Strict Rules:
