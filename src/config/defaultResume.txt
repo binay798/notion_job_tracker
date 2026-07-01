@@ -1,47 +1,248 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Software Engineer Resume</title>
-    <link rel="stylesheet" href="styles.css" />
     <style>
       .links > a {
         font-size: 14px;
         color: blue;
       }
+      *,
+      *::after,
+      *::before {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Times New Roman", Times, serif;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      header h1 {
+        margin-bottom: 0.5rem;
+      }
+      .name {
+        font-size: 2.2rem;
+        text-transform: uppercase;
+      }
+      .links {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        justify-content: center;
+      }
+      .links a {
+        color: black;
+      }
+      .links a:not(:last-child) {
+        border-right: 1px solid #000;
+        padding-right: 7px;
+      }
+      .links a:last-child {
+        text-decoration: none;
+      }
+      .section {
+        margin-bottom: 1rem;
+      }
+      .section h3 {
+        border-bottom: 1px solid #000;
+        margin-bottom: 10px;
+      }
+      .experience {
+      }
+      .experience .header {
+        font-weight: bold;
+        font-size: 22px;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      ul {
+        list-style-type: disc;
+        padding-left: 30px;
+      }
+      .experience:not(:last-child) {
+        margin-bottom: 1rem;
+      }
+      .projects ul li:not(:last-child) {
+        margin-bottom: 5px;
+      }
+      .text {
+        line-height: 1.3;
+        font-size: 14px;
+      }
+      *,
+      *::after,
+      *::before {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Times New Roman", Times, serif;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      header h1 {
+        margin-bottom: 0.5rem;
+      }
+      .name {
+        font-size: 2.2rem;
+        text-transform: uppercase;
+      }
+      .links {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        justify-content: center;
+      }
+      .links a {
+        color: black;
+      }
+      .links a:not(:last-child) {
+        border-right: 1px solid #000;
+        padding-right: 7px;
+      }
+      .links a:last-child {
+        text-decoration: none;
+      }
+      .section {
+        margin-bottom: 1rem;
+      }
+      .section h3 {
+        border-bottom: 1px solid #000;
+        margin-bottom: 10px;
+      }
+      .experience {
+      }
+      .experience .header {
+        font-weight: bold;
+        font-size: 22px;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      ul {
+        list-style-type: disc;
+        padding-left: 30px;
+      }
+      .experience:not(:last-child) {
+        margin-bottom: 1rem;
+      }
+      .projects ul li:not(:last-child) {
+        margin-bottom: 5px;
+      }
+      .text {
+        line-height: 1.3;
+      }
+
+      .header_top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+      }
+      .header_left {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .header_right {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .icon_block {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .icon {
+        width: 18px;
+        height: 18px;
+        object-fit: contain;
+      }
+      .icon_block > a {
+        color: black;
+      }
+      .subtitle {
+        font-size: 14px;
+        font-weight: normal;
+        font-style: italic;
+      }
+      h3 {
+        font-size: 16px;
+      }
+      h5 {
+        font-size: 15px;
+      }
+
+      .education_block {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+      }
     </style>
   </head>
   <body>
     <header>
-      <h1 class="name">Binay Shrestha</h1>
-      <div class="links">
-        <a href="https://binay.dev/" target="_blank">https://binay.dev</a>
-        <a href="mailto:binayshrestha798@gmail.com"
-          >binayshrestha798@gmail.com</a
-        >
-        <a target="_blank" href="https://www.linkedin.com/in/binayshrestha1/"
-          >https://www.linkedin.com/in/binayshrestha1</a
-        >
-        <a
-          target="_blank"
-          href="https://github.com/binay798"
-          style="text-decoration: underline"
-          >https://github.com/binay798</a
-        >
+      <div class="header_top">
+        <div class="header_left">
+          <h1 class="name">Binay Shrestha</h1>
+          <div class="icon_block">
+            <img class="icon" src="./internet.png" alt="linkedin" />
+            <a href="https://binay.dev/" target="_blank">https://binay.dev</a>
+          </div>
+          <div class="icon_block" style="margin-top: 8px">
+            <img class="icon" src="./phone.png" alt="linkedin" />
+            +61-466330266
+          </div>
+        </div>
+        <div class="header_right">
+          <div class="icon_block">
+            <img class="icon" src="./gmail.png" alt="linkedin" />
+            <a href="mailto:binayshrestha798@gmail.com"
+              >binayshrestha798@gmail.com</a
+            >
+          </div>
+          <div class="icon_block">
+            <img class="icon" src="./linkedin.png" alt="linkedin" />
+            <a
+              target="_blank"
+              href="https://www.linkedin.com/in/binayshrestha1/"
+              >@binayshrestha1</a
+            >
+          </div>
+          <div class="icon_block">
+            <img class="icon" src="./github.png" alt="linkedin" />
+            <a
+              target="_blank"
+              href="https://github.com/binay798"
+              style="text-decoration: underline"
+              >@binay798</a
+            >
+          </div>
+        </div>
       </div>
     </header>
-    
+
     <section class="core_skills section">
       <h3>CORE SKILLS</h3>
       <ul>
         <li class="text">
-          Python, Javascript ( React JS, Next JS, Redux, Express JS , Node JS ),
-          Git, SQL, C++, Typescript, SCSS, GraphQL
+          <strong>Languages & Frameworks:</strong> Python, Javascript ( React
+          JS, Next JS, Redux, Express JS , Node JS ), Git, SQL, C++, Typescript,
+          SCSS, GraphQL.
         </li>
         <li class="text">
-          Docker, AWS, Frontend, Backend, Agile, CI/CD, AI, LLM, Microservices,
-          Redis, NGINX, Websockets
+          <strong>Tools & Technologies:</strong> Docker, AWS, Agile, CI/CD, AI,
+          LLM, Microservices, Redis, NGINX, Websockets.
         </li>
       </ul>
     </section>
@@ -49,44 +250,93 @@
       <h3>PROFESSIONAL EXPERIENCE</h3>
       <div class="experience">
         <div class="header">
-          <h5>Codniv Innovations - Software Engineer</h5>
-          <h5>Mar 2022 - May 2026</h5>
+          <div>
+            <h5>Codniv Innovations</h5>
+            <p class="subtitle">Software Engineer</p>
+          </div>
+          <p class="subtitle">Mar 2022 - May 2026</p>
         </div>
         <ul>
           <li class="text">
-            Identified and resolved over <b>100 critical bugs</b> during the
-            database migration process, resulting in a <b>30% reduction</b> in
-            data-related error tickets post-launch.
+            Designed and integrated a background job processing system (using
+            BullMQ/Redis) to handle long-running operations such as report
+            generation and bulk data imports; shifted these tasks off the main
+            application thread to ensure the UI remained fluid and responsive
+            for end-users.
           </li>
           <li class="text">
-            Overhauled the legacy database systems by migrating them to a more
-            scalable and reliable platform, ensuring 99.9% uptime and data
-            integrity.
+            Implemented a custom state-management layer to synchronize
+            high-volume data updates between the client and server, utilizing
+            WebSockets for real-time reporting that replaced inefficient polling
+            and reduced server load by 25%
           </li>
           <li class="text">
-            Provided technical guidance and mentorship to junior team members,
-            resulting in a <b>15% increase</b> in their code contribution and a
-            significant improvement in overall code quality.
+            Engineered a caching layer using Redis to cache high-frequency read
+            requests, significantly offloading the primary PostgreSQL database
+            and reducing average response times for public-facing API endpoints
+            by 45%.
           </li>
         </ul>
       </div>
-      
+      <div class="experience">
+        <div class="header">
+          <div>
+            <h5>Pixelsquare Pvt. Ltd.</h5>
+            <p class="subtitle">Fullstack Engineer</p>
+          </div>
+          <p class="subtitle">Apr 2021 - Feb 2022</p>
+        </div>
+        <ul>
+          <li class="text">
+            Architected a modular, reusable UI component library using
+            TypeScript and React, significantly standardizing design patterns
+            across the application and reducing the time-to-market for new
+            frontend feature development by 30%.
+          </li>
+          <li class="text">
+            Engineered a comprehensive centralized logging and error-tracking
+            pipeline (utilizing tools like Sentry and Winston) to capture stack
+            traces and contextual metadata; this provided the engineering team
+            with deep visibility into intermittent production issues, decreasing
+            the time required to diagnose and resolve critical bugs
+          </li>
+        </ul>
+      </div>
+      <div class="experience">
+        <div class="header">
+          <div>
+            <h5>Start GOC</h5>
+            <p class="subtitle">Frontend Developer</p>
+          </div>
+          <p class="subtitle">Jan 2020 - Mar 2021</p>
+        </div>
+        <ul>
+          <li class="text">
+            Led the migration of a legacy frontend codebase to a modern React
+            architecture, utilizing lazy loading and code-splitting to improve
+            page load speeds by 50% and enhance core web vitals
+          </li>
+          <li class="text">
+            Designed and integrated complex, reusable UI component libraries
+            using TypeScript, which standardized design patterns across the
+            application and reduced new feature delivery time by 30%
+          </li>
+        </ul>
+      </div>
     </section>
     <section class="section projects">
       <h3>PROJECTS</h3>
       <ul>
-        <li>
-          <strong>Devflow</strong> - It is a web-based IDE that lets developers
-          write, run, and preview code in the browser using WebContainer
-          technology. It enables zero-setup full-stack development, real-time
-          collaboration, and secure isolated environments.
+        <li class="text">
+          <strong>Devflow</strong> - Developed a browser-based IDE utilizing
+          WebContainers, facilitating seamless full-stack development with
+          real-time collaboration and isolated execution environments.
         </li>
-        <li>
-          <strong>Scalable Real‑Time Chat Platform</strong> – Engineered a
-          high-traffic, real-time chat platform on AWS EC2, utilizing Redis
-          Pub/Sub to horizontally scale WebSocket connections. This architecture
-          supports thousands of concurrent users while maintaining low latency
-          (<100ms) and ensuring high availability.
+        <li class="text">
+          <strong>Scalable Real‑Time Chat Platform</strong> – Designed and
+          deployed a high-availability, real-time messaging service on AWS,
+          utilizing Redis Pub/Sub to manage WebSocket state and ensure robust
+          performance under heavy load (<100ms latency).
         </li>
       </ul>
     </section>
@@ -94,18 +344,30 @@
 
     <section class="section education">
       <h3>EDUCATION</h3>
-      <ul>
+      <ul class="text">
         <li>
-          <strong> Master of ICT (Research)</strong> - Melbourne Institute of
-          Technology, Sydney, Australia
+          <div class="education_block">
+            <div>
+              <p>
+                <strong>Melbourne Institute of Technology</strong>
+              </p>
+              <p class="subtitle">Master of ICT (Research)</p>
+            </div>
+          </div>
         </li>
-      </ul>
-    </section>
-
-    <section class="section">
-      <h3>Work Rights</h3>
-      <ul>
-        <li>Full Working Rights in Australia</li>
+        <li>
+          <div>
+            <div>
+              <p>
+                <strong>Tribhuvan University</strong>
+              </p>
+              <p class="subtitle">
+                Bachelor of Computer Science and Information Technology; GPA:
+                3.66 (9.15/10.0)
+              </p>
+            </div>
+          </div>
+        </li>
       </ul>
     </section>
   </body>
