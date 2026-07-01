@@ -122,7 +122,7 @@ const generateResumeHtml = async (jobDescription: string) => {
     Section Headings,14 – 16 pt,Use bolding to make them stand out.
     Main Body Content,11 – 12 pt,The bulk of your text (experience/projects).
     Contact Info/Sub-headers,10 – 12 pt,Can be slightly smaller than body text if needed.
-  8. Output should be in html format.
+  8. Output should be in html format and **don't change any styles of my current resume html**.
   9. Generate maximum of 3 distinct resume bullet points for Professional experience section using the Action + Context + Result (Metric) formula.
         Strict Rules:
           * Start every bullet with a strong past-tense action verb (e.g., Architected, Engineered, Optimized).
